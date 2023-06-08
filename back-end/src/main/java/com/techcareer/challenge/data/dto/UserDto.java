@@ -1,6 +1,6 @@
 package com.techcareer.challenge.data.dto;
 
-import com.techcareer.challenge.data.enums.Role;
+import com.techcareer.challenge.data.enums.RoleType;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -17,5 +17,6 @@ public class UserDto {
     private String password;
     private String firstName;
     private String lastName;
-    private List<Role> roleList;
+    private boolean active;
+    private List<RoleType> roleList;
 }
