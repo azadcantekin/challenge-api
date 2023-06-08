@@ -8,6 +8,7 @@ import com.techcareer.challenge.repository.ProductRepository;
 import com.techcareer.challenge.service.ProductService;
 import com.techcareer.challenge.utilities.mapper.ModelConverterService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -15,6 +16,7 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class ProductServiceImpl implements ProductService {
 
     private final ProductRepository productRepository;
@@ -26,12 +28,15 @@ public class ProductServiceImpl implements ProductService {
         Optional<ProductDto> optionalProductDto = Optional.ofNullable(productDto);
         //check if cardDto is empty
         if (optionalProductDto.isEmpty()){
+            log.error("Empty productDto received");
             throw new BadRequestException("Bad request");
         }
         //save data to db
+        log.info("New product added: {}", productDto.getName());
         ProductModel productModel = converterService.convertToType(optionalProductDto, ProductModel.class);
         productRepository.save(productModel);
 
+        log.info("Product saved with ID: {}", productModel.getId());
         return productModel.getId();
 
 
@@ -41,7 +46,8 @@ public class ProductServiceImpl implements ProductService {
     public ProductDto getProduct(Integer productId) {
         //fetch data from db  or throw an exception
         Optional<ProductModel> productModel = Optional.ofNullable(productRepository.findById(productId)
-                .orElseThrow(() -> new ResourceNotFoundException("Product not found", null)));
+                .orElseThrow(
+                        () -> new ResourceNotFoundException("Product not found", null)));
         //map and return
         return converterService.convertToType(productModel , ProductDto.class);
     }
@@ -61,7 +67,9 @@ public class ProductServiceImpl implements ProductService {
             ProductModel productModel = optionalProductModel.get();
 
             //check if units in stock greater than 0 and return true
+
             if (productModel.getUnitsInStock()>0){
+                log.info("Product sold: {}", productModel.getName());
                 productModel.setUnitsInStock(productModel.getUnitsInStock()-1);
                 productRepository.save(productModel);
                 return true;
@@ -76,6 +84,8 @@ public class ProductServiceImpl implements ProductService {
     public List<ProductDto> getAllProducts() {
         // Fetch data from db  , mapping dto and return list .
         List<ProductModel> productModelList = productRepository.findAll();
+        log.info("Retrieved {} products", productModelList.size());
+
         return converterService.mapList(productModelList, ProductDto.class);
     }
 
@@ -83,8 +93,10 @@ public class ProductServiceImpl implements ProductService {
     public void deleteProduct(Integer productId) {
         try{
             productRepository.deleteById(productId);
+            log.info("Product deleted with ID: {}", productId);
         }
         catch (ResourceNotFoundException exception){
+            log.error("Product not found with ID: {}", productId);
             throw new ResourceNotFoundException("Product not found", exception.getCause());
         }
     }

@@ -9,11 +9,13 @@ import com.techcareer.challenge.repository.CardRepository;
 import com.techcareer.challenge.service.CardService;
 import com.techcareer.challenge.utilities.mapper.ModelConverterService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class CardServiceImpl implements CardService {
 
     private final CardRepository cardRepository;
@@ -24,16 +26,19 @@ public class CardServiceImpl implements CardService {
         //Check if card is null .
         Optional<CardDto> optionalCardDto = Optional.ofNullable(cardDto);
         if (optionalCardDto.isEmpty()){
+            log.error("Empty cardDto received");
             throw new BadRequestException("Bad request ");
         }
 
         CardModel cardModel = converterService.convertToType(optionalCardDto.get(), CardModel.class);
         //check if card already exists
         if (cardDto.getCardDumber().equals(cardModel.getCardNumber())){
+            log.error("Card already exists: {}", cardDto.getCardDumber());
             throw new ResourceExistsException("Card already exists",null);
         }
         //save data to db .
         cardRepository.save(cardModel);
+        log.info("New card added with ID: {}", cardModel.getId());
         return cardModel.getId();
 
     }
@@ -49,10 +54,11 @@ public class CardServiceImpl implements CardService {
 
     @Override
     public void deleteCard(Integer cardId) {
-        try{
+        try {
             cardRepository.deleteById(cardId);
-        }
-        catch (ResourceNotFoundException exception){
+            log.info("Card deleted with ID: {}", cardId);
+        } catch (ResourceNotFoundException exception) {
+            log.error("Card not found with ID: {}", cardId);
             throw new ResourceNotFoundException("Card not found",null);
         }
     }
