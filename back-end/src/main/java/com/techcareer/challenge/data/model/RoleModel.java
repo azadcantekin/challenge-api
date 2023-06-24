@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.security.core.GrantedAuthority;
 
 import java.util.List;
 
@@ -15,7 +16,7 @@ import java.util.List;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class RoleModel {
+public class RoleModel implements GrantedAuthority {
 
     @Id
     @SequenceGenerator(
@@ -31,4 +32,9 @@ public class RoleModel {
     private RoleType roleType;
     @ManyToMany(mappedBy = "roles")
     private List<UserModel> users;
+
+    @Override
+    public String getAuthority() {
+        return String.valueOf(roleType);
+    }
 }

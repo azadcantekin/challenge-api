@@ -1,12 +1,15 @@
 package com.techcareer.challenge.data.enums;
 
-public enum RoleType {
-    ADMIN("ADMIN"),
-    USER("USER");
+import org.springframework.security.core.GrantedAuthority;
 
-    private String type;
+public enum RoleType implements GrantedAuthority {
+    ADMIN,
+    USER;
 
-    RoleType(String type) {
-        this.type = type;
+
+
+    @Override
+    public String getAuthority() {
+        return name();
     }
 }

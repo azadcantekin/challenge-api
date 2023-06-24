@@ -17,12 +17,12 @@ public class UserController {
     private final UserService userService;
 
     @PostMapping("/sign-up")
-    public ResponseEntity<?> signUp(@RequestBody UserDto userDto){
+    public ResponseEntity<UserDto> signUp(@RequestBody UserDto userDto){
         return ResponseEntity.ok(userService.signUp(userDto));
     }
 
     @PostMapping("/sign-in")
-    public ResponseEntity<?> signIn(@RequestBody SignInRequest signInRequest){
+    public ResponseEntity<UserDto> signIn(@RequestBody SignInRequest signInRequest){
         if (signInRequest.getPassword().isEmpty() || signInRequest.getEmail().isEmpty()){
             throw new BadRequestException("Invalid field");
         }
@@ -35,6 +35,10 @@ public class UserController {
             throw new BadRequestException("Invalid user ID");
         }
         return ResponseEntity.ok(userService.updateUser(userId, userDto ));
+    }
+    @GetMapping("/confirmation/confirm")
+    public String confirm(@RequestParam String confirmationToken) {
+        return userService.confirmUser(confirmationToken);
     }
 
     @DeleteMapping("/delete-user")
