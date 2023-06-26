@@ -39,13 +39,7 @@ public class UserModel {
     private List<RoleModel> roles;
     private boolean active;
     private int failedLoginAttempt;
-    private String verificationCode;
     @OneToMany(mappedBy = "userModel", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<CardModel> creditCards = new ArrayList<>();
-
-    @OneToMany(mappedBy = "userModel", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<TokenModel> tokenList = new ArrayList<>();
-    private Boolean nonLocked = true;
-    private Boolean enabled = false;
 
 }
