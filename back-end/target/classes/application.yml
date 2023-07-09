@@ -1,0 +1,43 @@
+server:
+  port: 8080
+spring:
+  application:
+    name: techcareer-challenge
+  datasource:
+    password: password
+    url: jdbc:postgresql://localhost:5432/challenge
+    username: act
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        format_sql: true
+    show-sql: true
+  mail:
+    host: localhost
+    port: 1025
+    username: hello
+    password: hello
+
+    properties:
+      mail:
+        smtp:
+          ssl:
+            trust: "*"
+          auth: false
+          starttls:
+            enable: true
+          connectiontimeout: 5000
+          timeout: 3000
+          writetimeout: 5000
+          socketFactory:
+            port: '465'
+            class: javax.net.ssl.SSLSocketFactory
+logging:
+  file:
+    name: project.log
+    path: ./
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} %-5p %c{1}:%L - %m%n"
